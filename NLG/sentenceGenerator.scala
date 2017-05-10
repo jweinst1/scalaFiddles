@@ -10,21 +10,24 @@ object main {
     val bank = new LanguageBank();
     //arrays of sentences
     bank.insertSentence("I love apples");
+    bank.insertSentence("I see apples now");
     bank.insertSentence("I hate apples rotten");
     bank.insertSentence("I love berries");
     bank.insertSentence("I hate blue berries");
     bank.insertSentence("I love apples too");
     bank.insertSentence("I don't like apples");
+    bank.insertSentence("I like brown apples");
     bank.insertSentence("I don't love pees");
     bank.insertSentence("I can't love bees");
     bank.insertSentence("I never hate apples");
-    1 to 20 foreach {_ => println(bank.genSentence(3))}
+    bank.insertSentence("I could hate apples");
+    1 to 20 foreach {_ => println(bank.genSentence(4))}
   }
 }
 
 object SetTools {
-  //randomly selects element from a set
-  def random[T](s: Set[T]): T = {
+  //randomly selects element from a string set
+  def random(s: Set[String]): String = {
     val n = util.Random.nextInt(s.size)
     s.iterator.drop(n).next
   }
@@ -44,6 +47,10 @@ class LanguageBank() {
         }
         else wordChain(words(i)) = Set(words(i+1))
       }
+      //deals with last word
+      if(!wordChain.contains(words(words.length-1))) {
+          wordChain(words(words.length-1)) = Set();
+      }
     }
   }
   
@@ -52,6 +59,10 @@ class LanguageBank() {
     var curWord:String = SetTools.random(startWords);
     sent += curWord;
     for(_ <- 1 to len-1){
+      if(wordChain(curWord).isEmpty) {
+        sent += "%%%";
+        return sent.mkString(" ");
+      }
       curWord = SetTools.random(wordChain(curWord));
       sent += curWord
     }
